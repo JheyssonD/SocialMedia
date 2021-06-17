@@ -7,7 +7,6 @@
   <ItemGroup>
     <Folder Include="DTOs\" />
     <Folder Include="Exceptions\" />
-    <Folder Include="Interfaces\" />
     <Folder Include="Enumerations\" />
   </ItemGroup>
 
