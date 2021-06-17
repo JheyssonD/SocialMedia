@@ -9,7 +9,6 @@
     <Folder Include="Exceptions\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Enumerations\" />
-    <Folder Include="Entities\" />
   </ItemGroup>
 
 </Project>
