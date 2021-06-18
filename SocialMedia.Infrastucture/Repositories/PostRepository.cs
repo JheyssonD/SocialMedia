@@ -18,9 +18,9 @@ namespace SocialMedia.Infrastucture.Repositories
             Context = context;
         }
 
-        public async Task<IEnumerable<Publicacion>> GetPosts()
+        public async Task<IEnumerable<Post>> GetPosts()
         {
-            var post = await  Context.Publicacion.ToListAsync();
+            var post = await  Context.Post.ToListAsync();
             return post;
         }
     }
