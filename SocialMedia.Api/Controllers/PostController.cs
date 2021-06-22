@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using SocialMedia.Core.Entities;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using SocialMedia.Core.DTOs;
+using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
-using SocialMedia.Infrastucture.Repositories;
 using System;
-using System.Threading.Tasks;
-using System.Linq;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SocialMedia.Api.Controllers
 {
@@ -15,39 +14,27 @@ namespace SocialMedia.Api.Controllers
     public class PostController : ControllerBase
     {
         private readonly IPostRepository PostRepository;
+        private readonly IMapper Mapper;
 
-        public PostController(IPostRepository postRepository)
+        public PostController(IPostRepository postRepository, IMapper mapper)
         {
             PostRepository = postRepository;
+            Mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetPosts()
         {
             IEnumerable<Post> posts = await PostRepository.GetPosts();
-            IEnumerable<PostDTO> postDTO = posts.Select(x => new PostDTO
-            {
-                PostId = x.PostId,
-                Date = x.Date,
-                Description = x.Description,
-                Image = x.Image,
-                UserId = x.UserId
-            });
-            return Ok(postDTO);
+            IEnumerable<PostDTO> postsDTO = Mapper.Map<IEnumerable<Post>, IEnumerable<PostDTO>>(posts);
+            return Ok(postsDTO);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPosts(int id)
         {
             Post post = await PostRepository.GetPost(id);
-            PostDTO postDTO = new PostDTO
-            {
-                PostId = post.PostId,
-                Date = post.Date,
-                Description = post.Description,
-                Image = post.Image,
-                UserId = post.UserId
-            };
+            PostDTO postDTO = Mapper.Map<Post, PostDTO>(post);
             return Ok(postDTO);
         }
 
@@ -55,14 +42,8 @@ namespace SocialMedia.Api.Controllers
         public async Task<IActionResult> Post(PostDTO postDTO)
         {
             postDTO.Date = DateTime.Now;
-            Post post = new Post
-            {
-                PostId = postDTO.PostId,
-                Date = postDTO.Date,
-                Description = postDTO.Description,
-                Image = postDTO.Image,
-                UserId = postDTO.UserId
-            };
+            Post post = Mapper.Map<PostDTO, Post>(postDTO);
+
             await PostRepository.InsertPost(post);
             return Ok(post);
         }

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Infrastucture.Data;
 using SocialMedia.Infrastucture.Repositories;
+using System;
 
 namespace SocialMedia.Api
 {
@@ -23,6 +24,7 @@ namespace SocialMedia.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddControllers();
 
             services.AddDbContext<SocialMediaContext>(options => 
