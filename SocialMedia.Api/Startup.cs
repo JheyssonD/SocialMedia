@@ -1,3 +1,4 @@
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +35,7 @@ namespace SocialMedia.Api
             })
             .ConfigureApiBehaviorOptions(options => 
             {
-                options.SuppressModelStateInvalidFilter = true;
+                // options.SuppressModelStateInvalidFilter = true;
             });
 
             services.AddDbContext<SocialMediaContext>(options => 
@@ -47,6 +48,11 @@ namespace SocialMedia.Api
             services.AddMvc(options => 
             {
                 options.Filters.Add<ValidationFilter>();
+            })
+            // registramos los modelsValidatorss
+            .AddFluentValidation(options => 
+            {
+                options.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
             });
         }
 
