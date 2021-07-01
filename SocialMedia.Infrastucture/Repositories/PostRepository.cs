@@ -18,13 +18,13 @@ namespace SocialMedia.Infrastucture.Repositories
 
         public async Task<IEnumerable<Post>> GetPosts()
         {
-            var post = await Context.Posts.ToListAsync();
-            return post;
+            List<Post> posts = await Context.Posts.ToListAsync();
+            return posts;
         }
 
         public async Task<Post> GetPost(int id)
         {
-            var post = await Context.Posts.FirstOrDefaultAsync(p => p.PostId == id);
+            Post post = await Context.Posts.FirstOrDefaultAsync(p => p.PostId == id);
             return post;
         }
 

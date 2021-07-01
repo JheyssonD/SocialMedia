@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SocialMedia.Core.Interfaces;
+using SocialMedia.Core.Services;
 using SocialMedia.Infrastucture.Data;
 using SocialMedia.Infrastucture.Filters;
 using SocialMedia.Infrastucture.Repositories;
@@ -44,12 +45,15 @@ namespace SocialMedia.Api
 
             // Our Dependencies
             services.AddTransient<IPostRepository, PostRepository>();
+            services.AddTransient<IPostService, PostService>();
+            services.AddTransient<IUserRepository, UserRepository>();
+            // services.AddTransient<IUserService, UserService>();
 
             services.AddMvc(options => 
             {
                 options.Filters.Add<ValidationFilter>();
             })
-            // registramos los modelsValidatorss
+            // registramos los modelsValidators
             .AddFluentValidation(options => 
             {
                 options.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
