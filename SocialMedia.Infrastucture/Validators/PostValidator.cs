@@ -12,7 +12,7 @@ namespace SocialMedia.Infrastucture.Validators
         {
             RuleFor(post => post.Description)
                 .NotNull()
-                .Length(10, 15);
+                .Length(10, 500);
 
             RuleFor(post => post.Date)
                 .NotNull()

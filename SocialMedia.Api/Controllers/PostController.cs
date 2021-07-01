@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using SocialMedia.Api.Responses;
 using SocialMedia.Core.DTOs;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
@@ -27,7 +28,8 @@ namespace SocialMedia.Api.Controllers
         {
             IEnumerable<Post> posts = await PostRepository.GetPosts();
             IEnumerable<PostDTO> postsDTO = Mapper.Map<IEnumerable<Post>, IEnumerable<PostDTO>>(posts);
-            return Ok(postsDTO);
+            ApiResponse<IEnumerable<PostDTO>> response = new ApiResponse<IEnumerable<PostDTO>>(postsDTO);
+            return Ok(response);
         }
 
         [HttpGet("{id}")]
@@ -35,7 +37,8 @@ namespace SocialMedia.Api.Controllers
         {
             Post post = await PostRepository.GetPost(id);
             PostDTO postDTO = Mapper.Map<Post, PostDTO>(post);
-            return Ok(postDTO);
+            ApiResponse<PostDTO> response = new ApiResponse<PostDTO>(postDTO);
+            return Ok(response);
         }
 
         [HttpPost]
@@ -43,9 +46,29 @@ namespace SocialMedia.Api.Controllers
         {
             postDTO.Date = DateTime.Now;
             Post post = Mapper.Map<PostDTO, Post>(postDTO);
-
             await PostRepository.InsertPost(post);
-            return Ok(post);
+            postDTO = Mapper.Map<Post, PostDTO>(post);
+            ApiResponse<PostDTO> response = new ApiResponse<PostDTO>(postDTO);
+            return Ok(response);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Put(int id, PostDTO postDTO)
+        {
+            Post post = Mapper.Map<PostDTO, Post>(postDTO);
+            post.PostId = id;
+            await PostRepository.UpdatePost(post);
+            postDTO = Mapper.Map<Post, PostDTO>(post);
+            ApiResponse<PostDTO> response = new ApiResponse<PostDTO>(postDTO);
+            return Ok(response);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            bool result = await PostRepository.DeletePost(id);
+            ApiResponse<bool> response = new ApiResponse<bool>(result);
+            return Ok(response);
         }
     }
 }
