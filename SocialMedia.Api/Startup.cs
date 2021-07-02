@@ -28,7 +28,10 @@ namespace SocialMedia.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            services.AddControllers()
+            services.AddControllers(options =>
+            {
+                options.Filters.Add<GolbalExceptionFilter>();
+            })
             // ignore Reference Loop (entities Relationship)
             .AddNewtonsoftJson(options =>
             {
