@@ -24,7 +24,7 @@ namespace SocialMedia.Infrastucture.Repositories
 
         public async Task<User> GetUser(int id)
         {
-            User user = await Context.Users.FirstOrDefaultAsync(u => u.UserId == id);
+            User user = await Context.Users.FirstOrDefaultAsync(u => u.Id == id);
             return user;
         }
 
@@ -36,7 +36,7 @@ namespace SocialMedia.Infrastucture.Repositories
 
         public async Task<bool> UpdateUser(User modifiedUser)
         {
-            User currentPost = await GetUser(modifiedUser.UserId);
+            User currentPost = await GetUser(modifiedUser.Id);
             currentPost.Comments = modifiedUser.Comments;
             currentPost.FirstName = modifiedUser.FirstName;
             currentPost.LastName = modifiedUser.LastName;
