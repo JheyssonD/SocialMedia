@@ -44,10 +44,8 @@ namespace SocialMedia.Api
             );
 
             // Our Dependencies
-            services.AddTransient<IPostRepository, PostRepository>();
             services.AddTransient<IPostService, PostService>();
-            services.AddTransient<IUserRepository, UserRepository>();
-            // services.AddTransient<IUserService, UserService>();
+            services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
 
             services.AddMvc(options => 
             {
