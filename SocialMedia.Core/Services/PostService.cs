@@ -1,6 +1,7 @@
 ﻿using SocialMedia.Core.Entities;
 using SocialMedia.Core.Exceptions;
 using SocialMedia.Core.Interfaces;
+using SocialMedia.Core.QueryFilters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +18,23 @@ namespace SocialMedia.Core.Services
             UnitOfWork = unitOfWork;
         }
 
-        public IEnumerable<Post> GetPosts()
+        public IEnumerable<Post> GetPosts(PostQueryFilter filters)
         {
-            return UnitOfWork.PostRepository.GetAll();
+            var posts = UnitOfWork.PostRepository.GetAll();
+
+            if (filters.userId != null)
+            {
+                posts = posts.Where(p => p.UserId == filters.userId);
+            }
+            if (filters.date != null)
+            {
+                posts = posts.Where(p => p.Date.ToShortDateString() == filters.date?.ToShortDateString());
+            }
+            if (filters.description != null)
+            {
+                posts = posts.Where(p => p.Description.ToLower().Contains(filters.description.ToLower()));
+            }
+            return posts;
         }
 
         public async Task<Post> GetPost(int id)
@@ -51,16 +66,18 @@ namespace SocialMedia.Core.Services
             await UnitOfWork.SaveChangesAsync();
         }
 
-        public void UpdatePost(Post post)
+        public async Task<bool> UpdatePost(Post post)
         {
             UnitOfWork.PostRepository.Update(post);
-            UnitOfWork.SaveChanges();
+            await UnitOfWork.SaveChangesAsync();
+            return true;
         }
 
-        public async Task DeletePost(int id)
+        public async Task<bool> DeletePost(int id)
         {
             await UnitOfWork.PostRepository.Delete(id);
             await UnitOfWork.SaveChangesAsync();
+            return true;
         }
     }
 }
