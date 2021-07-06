@@ -38,17 +38,17 @@ namespace SocialMedia.Api.Controllers
             IEnumerable<PostDTO> postsDTO = Mapper.Map<IEnumerable<PostDTO>>(posts);
             ApiResponse<IEnumerable<PostDTO>> response = new ApiResponse<IEnumerable<PostDTO>>(postsDTO);
 
-            object metaData = new
+            response.Meta = new Metadata
             {
-                posts.TotalCount,
-                posts.PageSize,
-                posts.CurrentPage,
-                posts.TotalPages,
-                posts.HasPreviousPage,
-                posts.HasNextPage
+                TotalCount = posts.TotalCount,
+                PageSize = posts.PageSize,
+                CurrentPage = posts.CurrentPage,
+                TotalPages = posts.TotalPages,
+                HasPreviousPage = posts.HasPreviousPage,
+                HasNextPage = posts.HasNextPage
             };
 
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metaData));
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(response.Meta));
             return Ok(response);
         }
 
