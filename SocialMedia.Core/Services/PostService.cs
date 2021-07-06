@@ -1,4 +1,5 @@
-﻿using SocialMedia.Core.Entities;
+﻿using SocialMedia.Core.CustomEntities;
+using SocialMedia.Core.Entities;
 using SocialMedia.Core.Exceptions;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
@@ -18,23 +19,26 @@ namespace SocialMedia.Core.Services
             UnitOfWork = unitOfWork;
         }
 
-        public IEnumerable<Post> GetPosts(PostQueryFilter filters)
+        public PagedList<Post> GetPosts(PostQueryFilter filters)
         {
             var posts = UnitOfWork.PostRepository.GetAll();
 
-            if (filters.userId != null)
+            if (filters.UserId != null)
             {
-                posts = posts.Where(p => p.UserId == filters.userId);
+                posts = posts.Where(p => p.UserId == filters.UserId);
             }
-            if (filters.date != null)
+            if (filters.Date != null)
             {
-                posts = posts.Where(p => p.Date.ToShortDateString() == filters.date?.ToShortDateString());
+                posts = posts.Where(p => p.Date.ToShortDateString() == filters.Date?.ToShortDateString());
             }
-            if (filters.description != null)
+            if (filters.Description != null)
             {
-                posts = posts.Where(p => p.Description.ToLower().Contains(filters.description.ToLower()));
+                posts = posts.Where(p => p.Description.ToLower().Contains(filters.Description.ToLower()));
             }
-            return posts;
+
+            PagedList<Post> pagedPost = PagedList<Post>.Create(posts, filters.PageNumber, filters.PageSize);
+
+            return pagedPost;
         }
 
         public async Task<Post> GetPost(int id)
