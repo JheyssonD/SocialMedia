@@ -30,6 +30,11 @@ namespace SocialMedia.Api.Controllers
             UriService = uriService;
         }
 
+        /// <summary>
+        /// Retrieve all Posts
+        /// </summary>
+        /// <param name="filters">Filters to apply</param>
+        /// <returns></returns>
         [HttpGet(Name = nameof(GetPosts))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
