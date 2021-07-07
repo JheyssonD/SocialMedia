@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using SocialMedia.Api.Responses;
 using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.DTOs;
 using SocialMedia.Core.Entities;
-using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
 using SocialMedia.Core.Services;
+using SocialMedia.Infrastucture.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -22,14 +21,16 @@ namespace SocialMedia.Api.Controllers
     {
         private readonly IPostService PostService;
         private readonly IMapper Mapper;
+        private readonly IUriService UriService;
 
-        public PostController(IPostService postRepository, IMapper mapper)
+        public PostController(IPostService postRepository, IMapper mapper, IUriService uriService)
         {
             PostService = postRepository;
             Mapper = mapper;
+            UriService = uriService;
         }
 
-        [HttpGet]
+        [HttpGet(Name = nameof(GetPosts))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public IActionResult GetPosts([FromQuery] PostQueryFilter filters)
@@ -45,7 +46,9 @@ namespace SocialMedia.Api.Controllers
                 CurrentPage = posts.CurrentPage,
                 TotalPages = posts.TotalPages,
                 HasPreviousPage = posts.HasPreviousPage,
-                HasNextPage = posts.HasNextPage
+                HasNextPage = posts.HasNextPage,
+                PreviousPageUrl = UriService.GetPostPaginationUri(filters, Url.RouteUrl(nameof(GetPosts))).ToString(),
+                NextPageUrl = UriService.GetPostPaginationUri(filters, Url.RouteUrl(nameof(GetPosts))).ToString()
             };
 
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(response.Meta));

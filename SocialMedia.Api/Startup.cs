@@ -1,16 +1,20 @@
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.Services;
 using SocialMedia.Infrastucture.Data;
 using SocialMedia.Infrastucture.Filters;
+using SocialMedia.Infrastucture.Interfaces;
 using SocialMedia.Infrastucture.Repositories;
+using SocialMedia.Infrastucture.Services;
 using System;
 
 namespace SocialMedia.Api
@@ -43,6 +47,7 @@ namespace SocialMedia.Api
                 // options.SuppressModelStateInvalidFilter = true;
             });
 
+            services.Configure<PaginationOptions>(Configuration.GetSection("Pagination"));
             services.AddDbContext<SocialMediaContext>(options => 
                 options.UseSqlServer(Configuration.GetConnectionString("SocialMedia"))
             );
@@ -51,6 +56,13 @@ namespace SocialMedia.Api
             services.AddTransient<IPostService, PostService>();
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddSingleton<IUriService>(provider =>
+            {
+                var accesor = provider.GetRequiredService<IHttpContextAccessor>();
+                var request = accesor.HttpContext.Request;
+                var absoluteUrl = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
+                return new UriService(absoluteUrl);
+            });
 
             services.AddMvc(options => 
             {
