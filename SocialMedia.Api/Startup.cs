@@ -17,6 +17,8 @@ using SocialMedia.Infrastucture.Interfaces;
 using SocialMedia.Infrastucture.Repositories;
 using SocialMedia.Infrastucture.Services;
 using System;
+using System.IO;
+using System.Reflection;
 
 namespace SocialMedia.Api
 {
@@ -73,6 +75,9 @@ namespace SocialMedia.Api
                         Version = "v1"
                     }
                 );
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                options.IncludeXmlComments(xmlPath);
             });
 
             services.AddMvc(options => 
