@@ -1,5 +1,13 @@
-﻿USE [SocialMedia]
+﻿IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'SocialMedia')
+BEGIN
+CREATE DATABASE [SocialMedia]
+
+
+END
 GO
+    USE [SocialMedia]
+GO
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
