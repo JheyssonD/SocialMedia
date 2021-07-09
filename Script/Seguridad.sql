@@ -1,0 +1,8 @@
+﻿Create Table Seguridad
+(
+	IdSeguridad INT PRIMARY  KEY IDENTITY(1,1) NOT NULL,
+	Usuario VARCHAR(50) NOT NULL,
+	NombreUsuario VARCHAR(100) NOT NULL,
+	Contrasena VARCHAR(200) NOT NULL,
+	Rol VARCHAR(15) NOT NULL
+)

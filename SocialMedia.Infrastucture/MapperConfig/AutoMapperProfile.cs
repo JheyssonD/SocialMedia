@@ -8,8 +8,8 @@ namespace SocialMedia.Infrastucture.MapperConfig
     {
         public AutoMapperProfile()
         {
-            CreateMap<Post, PostDTO>().ForMember(d => d.PostId, m => m.MapFrom(s => s.Id));
-            CreateMap<PostDTO, Post>().ForMember(d => d.Id, m => m.MapFrom(s => s.PostId));
+            CreateMap<Post, PostDTO>().ForMember(d => d.PostId, m => m.MapFrom(s => s.Id)).ReverseMap();
+            CreateMap<Security, SecurityDTO>().ForMember(d => d.SecurityId, m => m.MapFrom(s => s.Id)).ReverseMap(); 
         }
     }
 }
