@@ -2,11 +2,12 @@
 using SocialMedia.Infrastucture.Interfaces;
 using SocialMedia.Infrastucture.Options;
 using System;
+using System.Linq;
 using System.Security.Cryptography;
 
 namespace SocialMedia.Infrastucture.Services
 {
-    class PasswordService : IPasswordHasher
+    public class PasswordService : IPasswordService
     {
         private readonly PasswordOptions Options;
 
@@ -15,23 +16,42 @@ namespace SocialMedia.Infrastucture.Services
             Options = options.Value;
         }
 
-        public bool check(string hash, string password)
+        public bool Check(string hash, string password)
         {
-            throw new NotImplementedException();
+            string[] parts = hash.Split(".", 3);
+            if (parts.Length != 3)
+            {
+                throw new FormatException("Unexpected Hash format");
+            }
+            int iterations = Convert.ToInt32(parts[0]);
+            byte[] salt = Convert.FromBase64String(parts[1]);
+            byte[] key = Convert.FromBase64String(parts[2]);
+
+            using (Rfc2898DeriveBytes algorithm = new Rfc2898DeriveBytes(
+                password,
+                salt,
+                iterations,
+                HashAlgorithmName.SHA512
+            ))
+            {
+                byte[] keyToCheck = algorithm.GetBytes(Options.SaltSize);
+
+                return keyToCheck.SequenceEqual(key);
+            }
         }
 
-        public string hash(string password)
+        public string Hash(string password)
         {
             //PBKDF2 implementation
-            using (var algorithm = new Rfc2898DeriveBytes(
+            using (Rfc2898DeriveBytes algorithm = new Rfc2898DeriveBytes(
                 password,
                 Options.SaltSize,
                 Options.Iterations,
                 HashAlgorithmName.SHA512
             ))
             {
-                var key = Convert.ToBase64String(algorithm.GetBytes(Options.SaltSize));
-                var salt = Convert.ToBase64String(algorithm.Salt);
+                string key = Convert.ToBase64String(algorithm.GetBytes(Options.SaltSize));
+                string salt = Convert.ToBase64String(algorithm.Salt);
 
                 return $"{Options.Iterations}.{salt}.{key}";
             }

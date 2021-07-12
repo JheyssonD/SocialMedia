@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Services;
+using SocialMedia.Infrastucture.Interfaces;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -15,35 +16,38 @@ namespace SocialMedia.Api.Controllers
     [ApiController]
     public class TokenController : ControllerBase
     {
-        public readonly IConfiguration Configuration;
-        public readonly ISecurityService SecurityService;
+        private readonly IConfiguration Configuration;
+        private readonly ISecurityService SecurityService;
+        private readonly IPasswordService PasswordService;
 
-        public TokenController(IConfiguration configuration, ISecurityService securityService)
+        public TokenController(IConfiguration configuration, ISecurityService securityService, IPasswordService passwordService)
         {
             Configuration = configuration;
             SecurityService = securityService;
+            PasswordService = passwordService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> AuthenticationAsync(UserLogin user)
+        public async Task<IActionResult> Authentication(UserLogin user)
         {
             //If is a valid user
-            (bool, Security) validation = await IsValidUserAsync(user);
+            (bool, Security) validation = await IsValidUser(user);
             if (validation.Item1)
             {
-                var token = generateToken(validation.Item2);
+                var token = GenerateToken(validation.Item2);
                 return Ok(new { token });
             }
             return NotFound();
         }
 
-        private async Task<(bool, Security)> IsValidUserAsync(UserLogin login)
+        private async Task<(bool, Security)> IsValidUser(UserLogin login)
         {
-            Security user = await SecurityService.GetLoginByCredentials(login);
-            return (user != null, user);
+            Security user = await SecurityService.GetLoginByUser(login);
+            bool isValid = PasswordService.Check(user.Password, login.Password);
+            return (isValid, user);
         }
 
-        private string generateToken(Security user)
+        private string GenerateToken(Security user)
         {
             //header
             SymmetricSecurityKey symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Authentication:SecretKey"]));

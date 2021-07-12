@@ -16,9 +16,9 @@ namespace SocialMedia.Core.Services
             UnitOfWork = unitOfWork;
         }
 
-        public async Task<Security> GetLoginByCredentials(UserLogin userLogin)
+        public async Task<Security> GetLoginByUser(UserLogin userLogin)
         {
-            return await UnitOfWork.SecurityRepository.GetLoginByCredentials(userLogin);
+            return await UnitOfWork.SecurityRepository.GetLoginByUser(userLogin);
         }
 
         public async Task RegisterUser(Security security)

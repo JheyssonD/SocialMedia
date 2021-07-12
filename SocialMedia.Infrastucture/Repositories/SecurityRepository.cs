@@ -10,9 +10,9 @@ namespace SocialMedia.Infrastucture.Repositories
     {
         public SecurityRepository(SocialMediaContext context) : base(context) { }
 
-        public async Task<Security> GetLoginByCredentials(UserLogin login)
+        public async Task<Security> GetLoginByUser(UserLogin login)
         {
-            return await Entities.FirstOrDefaultAsync(u => u.User == login.User && u.Password == login.Password);
+            return await Entities.FirstOrDefaultAsync(u => u.User == login.User);
         }
     }
 }

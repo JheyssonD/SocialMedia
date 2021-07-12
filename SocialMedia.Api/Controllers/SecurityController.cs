@@ -24,11 +24,13 @@ namespace SocialMedia.Api.Controllers
     {
         private readonly ISecurityService SecurityService;
         private readonly IMapper Mapper;
+        private readonly IPasswordService PasswordService;
 
-        public SecurityController(ISecurityService securityRepository, IMapper mapper)
+        public SecurityController(ISecurityService securityRepository, IMapper mapper, IPasswordService passwordService)
         {
             SecurityService = securityRepository;
             Mapper = mapper;
+            PasswordService = passwordService;
         }
 
         [HttpPost]
@@ -37,6 +39,7 @@ namespace SocialMedia.Api.Controllers
         public async Task<IActionResult> Security(SecurityDTO securityDTO)
         {
             Security security = Mapper.Map<Security>(securityDTO);
+            security.Password = PasswordService.Hash(security.Password);
             await SecurityService.RegisterUser(security);
             securityDTO = Mapper.Map<SecurityDTO>(security);
             ApiResponse<SecurityDTO> response = new ApiResponse<SecurityDTO>(securityDTO);

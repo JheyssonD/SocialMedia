@@ -63,6 +63,7 @@ namespace SocialMedia.Api
             // Our Dependencies
             services.AddTransient<IPostService, PostService>();
             services.AddTransient<ISecurityService, SecurityService>();
+            services.AddTransient<IPasswordService, PasswordService>();
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddSingleton<IUriService>(provider =>
